@@ -11,15 +11,16 @@ export default function TodoTable({todos}) {
 
     const deleteTodo = async (todo) => {
         if (!window.confirm("Are you sure you want to delete the todo?")) return;
-
         try {
-            const res = await deleteTodoById(todo.id);
-            if (res.success) {
-                setTodosList((prevTodos) => prevTodos.filter((t) => t.id !== todo.id));
-            } else {
-                const messages = JSON.parse(res.message);
-                alert(`Todo was not deleted because: ${Object.values(messages).join(' ')}`);
-            }
+            deleteTodoById(todo.id).then((res) => {
+                if (res.data.success) {
+                    setTodosList((prevTodos) => prevTodos.filter((t) => t.id !== todo.id));
+                    alert(`Todo was deleted successfully!`);
+                } else {
+                    const messages = JSON.parse(res.message);
+                    alert(`Todo was not deleted because: ${Object.values(messages).join(' ')}`);
+                }
+            });
         } catch (error) {
             alert('Network error. Please try again.');
         }

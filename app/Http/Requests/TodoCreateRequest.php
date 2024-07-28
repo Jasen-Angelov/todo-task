@@ -2,7 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Dto\Response\ApiResponseDto;
+use App\Enums\StatusCodesEnum;
+use App\Enums\SuccessEnum;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class TodoCreateRequest extends FormRequest
 {
@@ -24,5 +29,20 @@ class TodoCreateRequest extends FormRequest
         return [
             'description' => 'required|string|min:3|max:255',
         ];
+    }
+
+    /**
+     * Handle a failed validation attempt.
+     *
+     */
+    protected function failedValidation(Validator $validator): void
+    {
+        $errors = $validator->errors()->toJson();
+        $response = new ApiResponseDto();
+        $response->success = SuccessEnum::ERROR;
+        $response->message = $errors;
+        $response->statusCode = StatusCodesEnum::UNPROCESSABLE;
+
+        throw new HttpResponseException(response()->json($response));
     }
 }

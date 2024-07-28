@@ -15,11 +15,16 @@ export default function Landing(){
 
     const handleLoad = useCallback(async () => {
         try {
-            const todos = await fetchTodos();
-            setData(todos);
-            setView('index');
+            fetchTodos().then((res) => {
+                if (res.data.success) {
+                    setData(res.data);
+                    setView('index');
+                    return
+                }
+                alert('Something went wrong!');
+            });
         } catch (error) {
-            console.error('Error fetching data:', error);
+            alert('Something went wrong!')
         }
     }, []);
 

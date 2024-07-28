@@ -9,9 +9,16 @@ export default function Create() {
     const onSubmit = async (e) => {
         e.preventDefault();
         try {
-            await createTodo(data);
-            alert('New todo added successfully!');
-            reset();
+            createTodo(data).then((res) => {
+                console.log(res );
+                if (res.data.statusCode === 202) {
+                    alert('New todo added successfully!');
+                    reset();
+                    return;
+                }
+                const messages = JSON.parse(res.data.message);
+                alert(`Error: ${Object.values(messages).join(' ')}`);
+            });
         } catch (error) {
             alert('Something went wrong!');
         }
